@@ -13,6 +13,8 @@
 
 set -eu
 
+SHELLRCDIR=~/.shellrc.d
+
 # stolen from https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
 command_exists() {
     command -v "$@" >/dev/null 2>&1
@@ -109,6 +111,41 @@ setup_bashrc() {
     append_or_create "${rcfile}" "${shell}"
 }
 
+setup_shellrcd_directory() {
+    if [ -e "${SHELLRCDIR}" ]; then
+        echo "[shellrcd] ${RED}${SHELLRCDIR}${RESET} already exists. Leaving unchanged."
+    else
+        echo "[shellrcd] ${YELLOW}${SHELLRCDIR} is not found${RESET}. Downloading..."
+        git clone --quiet --depth=1 --branch=master git://github.com/chiselwright/shellrcd.git "${SHELLRCDIR}"
+        echo "[shellrcd] ...done"
+    fi
+}
+
+show_welcome_message() {
+    printf '%s' "$GREEN"
+    cat <<"EOF"
+           _             _    _                    _
+          ( )           (_ ) (_ )                 ( )
+      ___ | |__     __   | |  | |  _ __   ___    _| |
+    /',__)|  _ `\ /'__`\ | |  | | ( '__)/'___) /'_` |
+    \__, \| | | |(  ___/ | |  | | | |  ( (___ ( (_| |
+    (____/(_) (_)`\____)(___)(___)(_)  `\____)`\__,_)
+                                ....is now installed!
+EOF
+
+    cat <<EOF
+
+    Please look over ${rcfile} for any glaring errors.
+
+    Check which scripts are active with:
+        sh ${SHELLRCDIR}/tools/list-active.sh
+
+    Once happy, open a new shell or:
+        source ${rcfile}
+EOF
+    printf '%s' "$RESET"
+}
+
 main() {
     setup_color
 
@@ -123,6 +160,10 @@ main() {
     else
         setup_bashrc
     fi
+
+    setup_shellrcd_directory
+
+    show_welcome_message
 }
 
 main "$@"
