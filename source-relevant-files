@@ -23,9 +23,9 @@ agdir="${shellrcddir}/_agnostic"
 initdir="${shellrcddir}/${shell}"
 
 for x in ${agdir}/* ${initdir}/* ; do
-  if [ -n "$DO_DEBUG" ]; then echo "[$x] found file"; fi
+  if [ -n "$DO_DEBUG" ]; then echo "[DEBUG][$x] found file"; fi
   test -f "$x" || continue
   test -x "$x" || continue
-  if [ -n "$DO_DEBUG" ]; then echo "[$x] sourcing file..."; fi
+  if [ -n "$DO_DEBUG" ]; then echo "[DEBUG][$x] sourcing file..."; fi
   source "$x"
 done
