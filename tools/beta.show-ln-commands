@@ -52,7 +52,7 @@ function process_homebin_directory() {
     done
 }
 
-directory=$(cd "$(dirname "$0")/" && pwd)
+directory=$(cd "$(dirname "$0")/.." && pwd)
 # don't do anything if we don't have any dotfiles
 if [ -d "${directory}/dotfiles" ]; then
     dest_dotfiles=$(find "${directory}/dotfiles" -mindepth 1 -name dot\*)
