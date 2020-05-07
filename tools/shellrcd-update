@@ -1,0 +1,71 @@
+#!/bin/sh
+# vim:filetype=sh
+set -eu
+
+# stolen from https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+setup_color() {
+    # Only use colors if connected to a terminal
+    if [ -t 1 ]; then
+        RED=$(printf '\033[31m')
+        GREEN=$(printf '\033[32m')
+        RESET=$(printf '\033[m')
+    else
+        RED=""
+        GREEN=""
+        RESET=""
+    fi
+}
+
+show_updated_message() {
+    printf '%s' "$GREEN"
+    cat <<"EOF"
+           _             _    _                    _
+          ( )           (_ ) (_ )                 ( )
+      ___ | |__     __   | |  | |  _ __   ___    _| |
+    /',__)|  _ `\ /'__`\ | |  | | ( '__)/'___) /'_` |
+    \__, \| | | |(  ___/ | |  | | | |  ( (___ ( (_| |
+    (____/(_) (_)`\____)(___)(___)(_)  `\____)`\__,_)
+                                ....is up to date!
+EOF
+
+    cat <<EOF
+
+    You are running from:
+        ${branch}
+
+    Updates will activate in a new shell, or if you source your rcfile
+EOF
+    printf '%s' "$RESET"
+}
+
+main() {
+    rcdir=~/.shellrc.d
+
+    cd "${rcdir}"
+
+    if [ "$(git diff --stat)" != '' ]; then
+        echo "${RED}[ERROR] uncommitted changes in ${rcdir}${RESET}"
+        exit 1;
+    fi
+
+    setup_color
+
+    # get the branch we're on
+    branch="$(git rev-parse --abbrev-ref HEAD)"
+
+    # not on master? switch to master
+    if [ "${branch}" != "master" ]; then
+        git checkout master
+    fi
+
+    git pull --rebase --ff-only --prune
+
+    if [ "${branch}" != "master" ]; then
+        git checkout "${branch}"
+        git rebase master
+    fi
+
+    show_updated_message
+}
+
+main "$@"
