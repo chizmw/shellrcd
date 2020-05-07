@@ -1,0 +1,63 @@
+#!/bin/bash
+
+function process_dotfiles_directory() {
+    local dest_dotfiles="${1:?Missing dest_dotfiles}"
+    for destfile in $dest_dotfiles; do
+
+        # recurse directories
+        if [ -d "$destfile" ]; then
+            echo "[directory found] $destfile"
+            dest_dotfiles=$(find "${destfile}" -mindepth 1 -type f)
+            process_dotfiles_directory "$dest_dotfiles"
+        else
+            result="${destfile//*dotfiles\/dot-/.}"
+
+            if [[ ! -L "$HOME/$result" ]]; then
+                echo "# $HOME/$result is NOT a softlink; you should replace it:"
+                echo "mv $HOME/$result $HOME/$result.$(date +%s)"
+                echo "ln -s $destfile $HOME/$result"
+                echo
+            fi
+
+            if [[ ! -e "$HOME/$result" ]]; then
+                echo "# [Safe]"
+                echo "ln -s $destfile $HOME/$result"
+                echo
+            fi
+        fi
+    done
+}
+
+function process_homebin_directory() {
+    if [ ! -d "${directory}/home-bin" ]; then
+        echo "[INFO] ${directory}/home-bin: not found, nothing to do"
+        return
+    fi
+
+    dest_binfiles=$(find "${directory}/home-bin" -mindepth 1 -type f)
+    for binfile in $dest_binfiles; do
+        echo "[binfile] $binfile"
+        result="${binfile//*home-bin\//bin\/}"
+        echo "[result]  $result"
+
+        if [[ ! -L "$HOME/$result" ]]; then
+            if [[ -e "$HOME/$result" ]]; then
+                echo "# $HOME/$result is NOT a softlink; you should replace it:"
+                echo "mv $HOME/$result $HOME/$result.$(date +%s)"
+                echo "ln -s $binfile $HOME/$result"
+            elif [[ ! -e "$HOME/$result" ]]; then
+                echo "ln -s $binfile $HOME/$result"
+            fi
+        fi
+    done
+}
+
+directory=$(cd "$(dirname "$0")/" && pwd)
+# don't do anything if we don't have any dotfiles
+if [ -d "${directory}/dotfiles" ]; then
+    dest_dotfiles=$(find "${directory}/dotfiles" -mindepth 1 -name dot\*)
+    process_dotfiles_directory "$dest_dotfiles"
+else
+    echo "[INFO] ${directory}/dotfiles: not found, nothing to do"
+fi
+process_homebin_directory
