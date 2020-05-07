@@ -37,9 +37,14 @@ setup_color() {
 }
 
 already_installed() {
-    # https://unix.stackexchange.com/questions/330660/prevent-grep-from-exiting-in-case-of-nomatch/403707#comment581721_330662
-    count=$(grep -c '^## added by shellrcd ##' "${1:?Missing Argument}" || :)
-    [ "$count" -gt 0 ]
+    _rcfile="${1:?Missing Argument}"
+    if [ ! -e "${_rcfile}" ]; then
+        false
+    else
+        # https://unix.stackexchange.com/questions/330660/prevent-grep-from-exiting-in-case-of-nomatch/403707#comment581721_330662
+        count=$(grep -c '^## added by shellrcd ##' "${_rcfile}" || :)
+        [ "$count" -gt 0 ]
+    fi
 }
 
 write_new_file() {
