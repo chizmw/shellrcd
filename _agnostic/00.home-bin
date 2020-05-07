@@ -1,0 +1,5 @@
+# add my own bin to my path
+if [ -d ${HOME}/bin ]; then
+    PATH=${HOME}/bin:${PATH}
+    export PATH
+fi
