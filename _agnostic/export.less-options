@@ -1,0 +1,4 @@
+# these make less (or less driven pagers) behave
+# a little more sensibly
+export LESS=-FRSX
+export LESSCHARSET=utf-8
