@@ -3,8 +3,15 @@
 This is a setup that will allow easy/easier management of you (zsh and bash)
 configuration.
 
-<!-- START doctoc -->
-<!-- END doctoc -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Quick Installation](#quick-installation)
+- [Cautious Installation](#cautious-installation)
+- [Example Installation](#example-installation)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Quick Installation
 
