@@ -3,6 +3,9 @@
 This is a setup that will allow easy/easier management of you (zsh and bash)
 configuration.
 
+<!-- START doctoc -->
+<!-- END doctoc -->
+
 ## Quick Installation
 
 If you're happy to run the installation script directly as your normal
