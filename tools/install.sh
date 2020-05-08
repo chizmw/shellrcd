@@ -123,7 +123,6 @@ setup_shellrcd_directory() {
         echo "[shellrcd] ${YELLOW}${SHELLRCDIR} is not found${RESET}. Downloading..."
         git clone --origin shellrcd \
             --quiet \
-            --depth=1 \
             --branch=master git://github.com/chiselwright/shellrcd.git \
             "${SHELLRCDIR}"
         echo "[shellrcd] ...done"
