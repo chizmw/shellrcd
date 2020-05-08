@@ -96,7 +96,7 @@ any desire to use `origin` for managing your additions.
 Make sure you set a suitable origin:
 
 ```
-git remote add origin git@github.com:USERNAME/shellrcd-extras-chizcw.git
+git remote add origin git@github.com:USERNAME/shellrcd-extras-USERNAME.git
 git remote update origin
 ```
 
