@@ -58,7 +58,7 @@ main() {
         git checkout master
     fi
 
-    git pull --rebase --ff-only --prune
+    git pull --rebase --ff-only --prune shellrcd
 
     if [ "${branch}" != "master" ]; then
         git checkout "${branch}"

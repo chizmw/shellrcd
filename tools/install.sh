@@ -121,7 +121,11 @@ setup_shellrcd_directory() {
         echo "[shellrcd] ${SHELLRCDIR} already exists. Leaving unchanged."
     else
         echo "[shellrcd] ${YELLOW}${SHELLRCDIR} is not found${RESET}. Downloading..."
-        git clone --quiet --depth=1 --branch=master git://github.com/chiselwright/shellrcd.git "${SHELLRCDIR}"
+        git clone --origin shellrcd \
+            --quiet \
+            --depth=1 \
+            --branch=master git://github.com/chiselwright/shellrcd.git \
+            "${SHELLRCDIR}"
         echo "[shellrcd] ...done"
     fi
 }
