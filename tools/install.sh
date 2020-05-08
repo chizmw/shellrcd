@@ -73,7 +73,7 @@ append_or_create() {
 
     if [ -f "${rcfile}" ] || [ -h "${rcfile}" ]; then
         if already_installed "${rcfile}"; then
-            echo "[${shell}] ${RED}shellrcd block already added to ${rcfile}${RESET}. Nothing to do."
+            echo "[${shell}] shellrcd block already added to ${rcfile}. Nothing to do."
         else
             echo "[${shell}] Adding shellrcd block to ${YELLOW}${rcfile}${RESET}..."
             append_block "${rcfile}"
@@ -118,7 +118,7 @@ setup_bashrc() {
 
 setup_shellrcd_directory() {
     if [ -e "${SHELLRCDIR}" ]; then
-        echo "[shellrcd] ${RED}${SHELLRCDIR}${RESET} already exists. Leaving unchanged."
+        echo "[shellrcd] ${SHELLRCDIR} already exists. Leaving unchanged."
     else
         echo "[shellrcd] ${YELLOW}${SHELLRCDIR} is not found${RESET}. Downloading..."
         git clone --quiet --depth=1 --branch=master git://github.com/chiselwright/shellrcd.git "${SHELLRCDIR}"
