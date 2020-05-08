@@ -1,0 +1,17 @@
+# vim: ts=8 sts=4 et sw=4 sr sta filetype=sh
+
+# THIS FILE ASSUMES THAT _shared/git-aliases UPDATES MAKE CHANGES
+# TO "$HOME/.gitconfig" TO STOP IT RUNNING NAIVELY EVERY TIME A NEW
+# SHELL IS STARTED
+
+# the file we want to source is the one whose timestamp we actually care about
+ze_file="$(dirname $0)/../_shared/git-aliases"
+
+# only proceed if the target file actually exists
+if [ -f "${ze_file}" ]; then
+    # only do the updates if the alias filled file is newer than our git config file
+    # (that means we've some something here)
+    if [ "${ze_file}" -nt "$HOME/.gitconfig" ]; then
+    source "${ze_file}"
+    fi
+fi
