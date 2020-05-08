@@ -1,0 +1,25 @@
+# from: man gpg-agent
+# then tweaked a bit
+# then tweaked some more
+
+if type "gpg-agent" >/dev/null; then
+    # if it looks like it's already running, don't bother
+    # starting the agent
+    if [ ! -S "${GNUPGHOME:-$HOME/.gnupg}/S.gpg-agent" ]; then
+        gpg-agent --daemon --use-standard-socket
+    fi
+
+    # p10k does strange things with `tty`, so we play it safe
+
+    # we do have the agent, so we always want to set this in a new session
+    export GPG_TTY=$(tty)
+
+    if [ "${GPG_TTY}" = "not a tty" ]; then
+        if [ -n "${TTY}" ]; then
+            export GPG_TTY="${TTY}"
+        else
+            echo "something went wrong with `tty` in $(basename $0) run this: "
+            echo '    export GPG_TTY=$(tty)'
+        fi
+    fi
+fi
