@@ -1,0 +1,24 @@
+# vim filetype=sh
+# you might find that you have problems with ssh permissions
+# vanishing (esp. on remote servers) after you reconnect to a screen/tmux
+# session
+# this alias (needs running in each affected (tmux) window reconnects your
+# aliases to the current reality
+
+# only create if we have tmux
+if type "tmux" >/dev/null; then
+    fixssh () {
+        for key in SSH_AUTH_SOCK SSH_CONNECTION SSH_CLIENT;
+        do
+            if ( tmux show-environment | grep "^${key}" > /dev/null ); then
+                value=`tmux show-environment | grep "^${key}" | sed -e "s/^[A-Z_]*=//"`;
+                export ${key}="${value}";
+            fi;
+        done
+    }
+
+# a placeholder for screen's equivalent, but the smart thing to do is switch
+# to tmux!
+elif type "screen" >/dev/null; then
+    true
+fi
