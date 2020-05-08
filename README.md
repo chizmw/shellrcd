@@ -15,6 +15,9 @@ configuration.
     - [Make A Test Commit](#make-a-test-commit)
   - [Pushing Your Changes](#pushing-your-changes)
   - [Working Example](#working-example)
+- [MANAGING SENSITIVE DATA](#managing-sensitive-data)
+  - [Local Directory, unmanaged, git-ignored](#local-directory-unmanaged-git-ignored)
+  - [git submodule with a private repository as the source](#git-submodule-with-a-private-repository-as-the-source)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -164,4 +167,35 @@ Create our new branch, and push it:
 git checkout -b extras/chizcw shellrcd/master
 
 git push -u origin extras/chizcw
+```
+
+## MANAGING SENSITIVE DATA
+
+You really do not want sensitive data added to a public repository!
+
+`shellrcd` will process the contents of `_PRIVATE` if it exists.
+
+There are two approaches we can suggest to manage files here
+
+### Local Directory, unmanaged, git-ignored
+
+You run the risk of losing the files, but for some this solution might be more
+than enough
+
+```
+cd ~/.shellrc.d
+mkdir _PRIVATE
+echo "/_PRIVATE" >> .gitignore
+git commit -v "Ignore contents of _PRIVATE/"
+```
+
+### git submodule with a private repository as the source
+
+This allows you to version manage the contents of `_PRIVATE` without having to
+expose the details publicly.
+
+```
+cd ~/.shellrc.d
+git submodule add git@github.com:USERNAME/shellrcd-private-USERNAME.git _PRIVATE
+git commit -m "Add _PRIVATE/ as submodule" .gitmodules _PRIVATE
 ```
