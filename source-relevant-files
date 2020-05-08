@@ -3,12 +3,6 @@
 # this SEEMS to behave sensibly, and the same way in both bash and zsh
 # apologies if I messed something up!
 
-if [ -f $HOME/.shellrc.d/debug-on ]; then
-    export DO_DEBUG=1
-else
-    unset DO_DEBUG
-fi
-
 # current shell with leading '-' removed
 shell=${SHELL##*/}
 
@@ -16,16 +10,26 @@ shell=${SHELL##*/}
 scriptname=${BASH_SOURCE[0]:-${(%):-%x}}
 export shellrcddir=$(dirname $scriptname)
 
-# where we expect common/agnostic items to live
-agdir="${shellrcddir}/_agnostic"
+if [ -f "${shellrcddir}/debug-on" ]; then
+    export SHELLRCD_DEBUG=1
+else
+    unset SHELLRCD_DEBUG
+fi
 
-# where we expect scripts to be
-initdir="${shellrcddir}/${shell}"
+# start with a list of no files at all
+files=()
 
-for x in ${agdir}/* ${initdir}/* ; do
-  if [ -n "$DO_DEBUG" ]; then echo "[DEBUG][$x] found file"; fi
+# check places we expect to find things
+for maybe_subdir in _agnostic "${shell}" _PRIVATE; do
+    if [ -d "${shellrcddir}/${maybe_subdir}" ]; then
+        files+=(${shellrcddir}/${maybe_subdir}/*)
+    fi
+done
+
+for x in "${files[@]}"; do
+  if [ -n "$SHELLRCD_DEBUG" ]; then echo "[DEBUG][${x//.\//}] found file"; fi
   test -f "$x" || continue
   test -x "$x" || continue
-  if [ -n "$DO_DEBUG" ]; then echo "[DEBUG][$x] sourcing file..."; fi
+  if [ -n "$SHELLRCD_DEBUG" ]; then echo "[DEBUG][${x//.\//}] sourcing file..."; fi
   source "$x"
 done
