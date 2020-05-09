@@ -67,7 +67,7 @@ fi
 EOF
 }
 
-append_or_create() {
+append_block_if_missing() {
     rcfile=${1:?Missing rcfile}
     shell=${2:?Missing shell}
 
@@ -79,8 +79,33 @@ append_or_create() {
             append_block "${rcfile}"
         fi
     else
-        echo "[${shell}] Creating ${YELLOW}${rcfile}${RESET} and adding shellrcd block..."
-        write_new_file "$rcfile" "$(which "${shell}")"
+        echo "[${shell}] trying to append to missing file: ${RED}${rcfile}${RESET}"
+    fi
+}
+
+append_or_create() {
+    rcfile=${1:?Missing rcfile}
+    shell=${2:?Missing shell}
+
+    # check for broken links
+    if [ -L "${rcfile}" ] && [ ! -f "${rcfile}" ]; then
+        echo    "[${shell}] ${RED}${rcfile} seems to be a broken symlink.${RESET} Moving..."
+        mv -v "${rcfile}" "${rcfile}.broken"
+    fi
+
+    if [ -f "${rcfile}" ] || [ -h "${rcfile}" ]; then
+        append_block_if_missing "${rcfile}" "${shell}"
+    else
+        # nothing in the home directory
+        # if we have "dotfiles/dot-zshrc" link straight to it
+        if [ -f "${SHELLRCDIR}/dotfiles/dot-${shell}rc" ]; then
+            echo "[${shell}] Linking ${SHELLRCDIR}/dotfiles/dot-${shell}rc to ${YELLOW}${rcfile}${RESET}"
+            ln -s "${SHELLRCDIR}/dotfiles/dot-${shell}rc" "${rcfile}"
+            append_block_if_missing "${rcfile}" "${shell}"
+        else
+            echo "[${shell}] Creating ${YELLOW}${rcfile}${RESET} and adding shellrcd block..."
+            write_new_file "$rcfile" "$(which "${shell}")"
+        fi
     fi
 }
 
@@ -129,6 +154,28 @@ setup_shellrcd_directory() {
     fi
 }
 
+setup_shellrcd_extra() {
+    # set values with empty defaults
+    extra_repo=${SHELLRCD_EXTRA_REPO:-}
+    extra_branch=${SHELLRCD_EXTRA_BRANCH:-}
+
+    if [ -n "${extra_repo}" ];then
+        # we have a desired repo, do we know the branch?
+        if [ -z "${extra_branch}" ]; then
+            echo "[shellrcd] ${RED}SHELLRCD_EXTRA_REPO set, but missing a value for SHELLRCD_EXTRA_BRANCH${RESET}"
+            exit
+        fi
+
+        echo "[shellrcd] Configuring ${YELLOW}${extra_branch}${RESET} from ${YELLOW}${extra_repo}${RESET}"
+        # do what we need to so it's set up
+        git -C "${SHELLRCDIR}" remote add origin git@github.com:chiselwright/shellrcd-extras-chizcw.git
+        git -C "${SHELLRCDIR}" remote update origin
+        git -C "${SHELLRCDIR}" checkout -t "origin/${extra_branch}"
+        # this just makes the history "look sensible" if you examine it in branch
+        git -C "${SHELLRCDIR}" rebase master
+    fi
+}
+
 show_welcome_message() {
     printf '%s' "$GREEN"
     cat <<"EOF"
@@ -172,6 +219,9 @@ install_updater() {
 main() {
     setup_color
 
+    setup_shellrcd_directory
+    setup_shellrcd_extra
+
     if ! command_exists zsh; then
         echo "${YELLOW}zsh is not installed.${RESET} Skipping ${GREEN}zsh${RESET} setup."
     else
@@ -183,8 +233,6 @@ main() {
     else
         setup_bashrc
     fi
-
-    setup_shellrcd_directory
 
     install_updater
 

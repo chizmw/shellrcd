@@ -7,9 +7,11 @@ configuration.
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [Quick Installation](#quick-installation)
-- [Cautious Installation](#cautious-installation)
-- [Example Installation](#example-installation)
+- [INSTALLATION](#installation)
+  - [Quick Installation](#quick-installation)
+  - [Cautious Installation](#cautious-installation)
+  - [Been Here Before Installation](#been-here-before-installation)
+  - [Example Installation](#example-installation)
 - [EXTENDING SHELLRCD](#extending-shellrcd)
   - [Configuring Your Own Branch](#configuring-your-own-branch)
     - [Make A Test Commit](#make-a-test-commit)
@@ -21,7 +23,9 @@ configuration.
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Quick Installation
+## INSTALLATION
+
+### Quick Installation
 
 If you're happy to run the installation script directly as your normal
 (non-root) user:
@@ -36,7 +40,7 @@ or
 sh -c "$(wget -qO- https://raw.githubusercontent.com/chiselwright/shellrcd/master/tools/install.sh)"
 ```
 
-## Cautious Installation
+### Cautious Installation
 
 If you prefer to download, examine, and run the script yourself:
 
@@ -49,7 +53,20 @@ $EDITOR ~/install-shellrcd.sh
 sh -c ~/install-shellrcd.sh
 ```
 
-## Example Installation
+### Been Here Before Installation
+
+There will come a point where you're wanting to replicate, or re-install work
+you've already made to your own configuration.
+
+You can set these value in your shell before running `tools/install.sh` (as
+above) to have the script checkout your branch for you:
+
+```
+export SHELLRCD_EXTRA_BRANCH=extras/firstlast
+export SHELLRCD_EXTRA_REPO=git@github.com:USERNAME/shellrcd-extras-firstlast.git
+```
+
+### Example Installation
 
 ```
 monster-mash:~ testuser$ sh -c "$(curl -fsSL https://raw.githubusercontent.com/chiselwright/shellrcd/master/tools/install.sh)"
@@ -99,7 +116,7 @@ any desire to use `origin` for managing your additions.
 Make sure you set a suitable origin:
 
 ```
-git remote add origin git@github.com:USERNAME/shellrcd-extras-USERNAME.git
+git remote add origin git@github.com:USERNAME/shellrcd-extras-firstlast.git
 git remote update origin
 ```
 
@@ -170,6 +187,9 @@ git push -u origin extras/chizcw
 ```
 
 ## MANAGING SENSITIVE DATA
+
+**THIS IS A WORK IN PROGRESS**
+_There have been some testing issues with submodules and rebase/update_
 
 You really do not want sensitive data added to a public repository!
 
