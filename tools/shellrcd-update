@@ -50,9 +50,9 @@ update_submodules() {
 main() {
     rcdir=~/.shellrc.d
 
-    #cd "${rcdir}"
+    cd "${rcdir}"
 
-    if [ "$(git -C "${rcdir}" diff --stat)" != '' ]; then
+    if [ "$(git diff --stat)" != '' ]; then
         echo "${RED}[ERROR] uncommitted changes in ${rcdir}${RESET}"
         exit 1;
     fi
@@ -60,23 +60,22 @@ main() {
     setup_color
 
     # get the branch we're on
-    branch="$(git -C "${rcdir}" rev-parse --abbrev-ref HEAD)"
+    branch="$(git rev-parse --abbrev-ref HEAD)"
 
-    # not on master? update ourselve, then switch to master
+    # not on master?
     if [ "${branch}" != "master" ]; then
-        git -C "${rcdir}" pull --rebase --ff-only
-        git -C "${rcdir}" checkout master
+        git checkout master
     fi
 
-    git -C "${rcdir}" pull --rebase --ff-only --prune shellrcd
+    git pull --rebase --ff-only --prune
 
     if [ "${branch}" != "master" ]; then
-        # make sure we're up to date wrt master
-        git -C "${rcdir}" checkout "${branch}"
-        git -C "${rcdir}" rebase master
-
-        # we should update our additional branch
-        git -C "${rcdir}" pull --rebase --ff-only
+        # check out the branch again
+        # update the branch
+        # rebase from master
+        git checkout "${branch}"
+        git pull --rebase --ff-only --prune
+        git rebase master
     fi
 
     update_submodules
