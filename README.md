@@ -218,4 +218,5 @@ expose the details publicly.
 cd ~/.shellrc.d
 git submodule add git@github.com:USERNAME/shellrcd-private-USERNAME.git _PRIVATE
 git commit -m "Add _PRIVATE/ as submodule" .gitmodules _PRIVATE
+git push --force-with-lease
 ```
