@@ -188,9 +188,6 @@ git push -u origin extras/chizcw
 
 ## MANAGING SENSITIVE DATA
 
-**THIS IS A WORK IN PROGRESS**
-_There have been some testing issues with submodules and rebase/update_
-
 You really do not want sensitive data added to a public repository!
 
 `shellrcd` will process the contents of `_PRIVATE` if it exists.
