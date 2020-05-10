@@ -16,9 +16,8 @@ if [ -f "${ze_file}" ]; then
             source "${ze_file}"
         else
             echo "[shellrcd] skipping nonexecutable ${ze_file}"
-            # stop us repeating ourselves; touch both files
+            # stop us repeating ourselves; touch the older file
             touch "$HOME/.gitconfig"
-            touch "${ze_file}"
         fi
     fi
 fi
