@@ -38,6 +38,16 @@ if type "git" >/dev/null; then
     git config --global alias.staged   "diff --cached"
     git config --global alias.undo     "reset --soft HEAD^"
 
+    # if we support the option, this is a nicer 'st'
+    if [ $(git status -h 2>&1|grep -c ' --branch ') -gt 0 ]; then
+        git config --global alias.st        "status -bs"
+    fi
+
+    # nice one-line log output
+    git config --global alias.tree "log --decorate --topo-order --graph --pretty=format:'%Cred%h %C(blue)[%G?] %Cgreen[%cr] %C(bold black)<%an>%Creset%C(yellow)%d %Creset %s%Creset' --date=relative"
+    # a brief summary
+    git config --global alias.tt   "log --decorate --topo-order --graph --pretty=format:'%Cred%h %C(blue)[%G?] %Cgreen[%cr] %C(bold black)<%an>%Creset%C(yellow)%d %Creset %s%Creset' --date=relative -n 10"
+
     # some sensible options
     ## https://thoughtbot.com/blog/autosquashing-git-commits
     git config --global rebase.autosquash true
@@ -52,6 +62,26 @@ if type "git" >/dev/null; then
     git config --global merge.conflictstyle diff3
     ## http://stackoverflow.com/questions/5519007/how-do-i-make-git-merges-default-be-no-ff-no-commit
     git config --global merge.ff no
+
+    # from http://mikewest.org/2011/04/a-quick-git-vim-workflow-tip
+    git config --global alias.fshow    "! sh -c 'git show --pretty=\"format:\" --name-only \$1 | grep -v \"^$\" | uniq | sed -e \"s#^#\`git rev-parse --show-toplevel\`/#\"' -"
+    # use 'fshow' to edit files in recent commit(s)
+    # without a range will edit the files in your most recent commit
+    git config --global alias.edit     "! sh -c '\$EDITOR \`git fshow \$1\`' -"
+
+    # it's nice to sign your commits
+    # we'll only set these if it looks likes the user wants us to
+    # (by them setting a variable we just made up for them)
+    if [ -n "${GIT_SIGNINGKEY_ID}" ]; then
+        # git commit signing
+        # https://gist.github.com/webframp/75c680930b6b2caba9a1be6ec23477c1
+        # both gitlab and github seem to not like push.gpgsign, so we ensure that's
+        # explicitly set to false
+        git config --global gpg.program     gpg
+        git config --global user.signingkey "${GIT_SIGNINGKEY_ID}"
+        git config --global commit.gpgsign  true
+        git config --global push.gpgsign    false
+    fi
 
     echo "[git aliases and config updated]"
 fi
