@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# git completion is a pain on the mac
+if [ -f /usr/share/git-core/git-completion.bash ]; then
+    source /usr/share/git-core/git-completion.bash;
+fi
+
+if [ -f /usr/local/etc/bash_completion.d/git-completion.bash ]; then
+    source /usr/local/etc/bash_completion.d/git-completion.bash;
+fi
