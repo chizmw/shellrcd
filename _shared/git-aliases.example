@@ -69,6 +69,13 @@ if type "git" >/dev/null; then
     # without a range will edit the files in your most recent commit
     git config --global alias.edit     "! sh -c '\$EDITOR \`git fshow \$1\`' -"
 
+    # make git do "sensible things with colours"
+    git config --global color.branch      auto
+    git config --global color.diff        auto
+    git config --global color.interactive auto
+    git config --global color.status      auto
+    git config --global color.ui          auto
+
     # it's nice to sign your commits
     # we'll only set these if it looks likes the user wants us to
     # (by them setting a variable we just made up for them)
