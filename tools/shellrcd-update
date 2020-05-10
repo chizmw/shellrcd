@@ -48,6 +48,8 @@ update_submodules() {
 }
 
 main() {
+    setup_color
+
     rcdir=~/.shellrc.d
 
     cd "${rcdir}"
@@ -56,8 +58,6 @@ main() {
         echo "${RED}[ERROR] uncommitted changes in ${rcdir}${RESET}"
         exit 1;
     fi
-
-    setup_color
 
     # get the branch we're on
     branch="$(git rev-parse --abbrev-ref HEAD)"
