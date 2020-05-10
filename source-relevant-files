@@ -8,7 +8,7 @@ shell=${SHELL##*/}
 
 # where we are now; https://stackoverflow.com/a/54755784
 scriptname=${BASH_SOURCE[0]:-${(%):-%x}}
-export shellrcddir=$(dirname $scriptname)
+shellrcddir=$(dirname $scriptname)
 
 if [ -f "${shellrcddir}/debug-on" ]; then
     export SHELLRCD_DEBUG=1
