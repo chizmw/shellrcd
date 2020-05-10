@@ -4,7 +4,7 @@
 # commands getting in the way of "instant prompt"
 
 # works with *nix and shitty macs
-DIRECTORY=$(cd `dirname $0`/.. && pwd)
+DIRECTORY=$HOME/.shellrc.d
 APPNAME=shellrcd
 shell=$(basename $SHELL)
 
