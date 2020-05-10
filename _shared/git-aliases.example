@@ -1,0 +1,57 @@
+# vim: ts=8 sts=4 et sw=4 sr sta syntax=sh
+# lifted from tmux-continuum
+acquire_lock() {
+        # Sometimes tmux starts multiple saves in parallel. We want only one
+        # save to be running, otherwise we can get corrupted saved state.
+        #local lockdir_prefix="/tmp/shellrcd-gitaliases-$(current_tmux_server_pid)-lock-"
+        local lockdir_prefix="/tmp/shellrcd-gitaliases-lock-"
+        # The following implements a lock that auto-expires after 100...200s.
+        local lock_generation=$((`date +%s` / 100))
+        local lockdir1="${lockdir_prefix}${lock_generation}"
+        local lockdir2="${lockdir_prefix}$(($lock_generation + 1))"
+        if mkdir "$lockdir1" 2>/dev/null; then
+                trap "rmdir "$lockdir1"" EXIT
+                if mkdir "$lockdir2"; then
+                        trap "rmdir "$lockdir1" "$lockdir2"" EXIT
+                        return 0
+                fi
+        fi
+        return 1  # Someone else has the lock.
+}
+
+# exit immediately if we can't acquire the lockfile
+if ! acquire_lock; then
+    echo "[Another terminal is already updating the aliases. Aborting in this terminal.]";
+    return;
+fi
+
+# 'lock' the update in case we're opening multiple terminals at the same
+# time
+if type "git" >/dev/null; then
+    # some common/handy aliases
+    git config --global alias.br       "branch"
+    git config --global alias.co       "checkout"
+    git config --global alias.fpush    "push --force-with-lease"
+    git config --global alias.pr       "pull --rebase --prune"
+    git config --global alias.praise   "blame"
+    git config --global alias.st       "status"
+    git config --global alias.staged   "diff --cached"
+    git config --global alias.undo     "reset --soft HEAD^"
+
+    # some sensible options
+    ## https://thoughtbot.com/blog/autosquashing-git-commits
+    git config --global rebase.autosquash true
+    ## https://stackoverflow.com/questions/18308535/automatic-prune-with-git-fetch-or-pull
+    git config --global fetch.prune true
+    ## sane date format
+    git config --global log.date iso8601
+    ## sensible default push behaviour
+    git config --global push.default current
+    ## http://psung.blogspot.co.uk/2011/02/reducing-merge-headaches-git-meets.html
+    git config --global rerere.enabled 1
+    git config --global merge.conflictstyle diff3
+    ## http://stackoverflow.com/questions/5519007/how-do-i-make-git-merges-default-be-no-ff-no-commit
+    git config --global merge.ff no
+
+    echo "[git aliases and config updated]"
+fi
