@@ -12,6 +12,10 @@ if [ -f "${ze_file}" ]; then
     # only do the updates if the alias filled file is newer than our git config file
     # (that means we've some something here)
     if [ "${ze_file}" -nt "$HOME/.gitconfig" ]; then
-    source "${ze_file}"
+        if [ -x "${ze_file}" ]; then
+            source "${ze_file}"
+        else
+            echo "[shellrcd] skipping nonexecutable ${ze_file}"
+        fi
     fi
 fi
