@@ -5,8 +5,17 @@
 if type "gpg-agent" >/dev/null; then
     # if it looks like it's already running, don't bother
     # starting the agent
-    if [ ! -S "${GNUPGHOME:-$HOME/.gnupg}/S.gpg-agent" ]; then
-        gpg-agent --daemon --use-standard-socket
+
+    # it looks like we can have the magic files in more than one place:
+    # - ~/.gnupg/
+    # - $GNUPGHOME
+    # - /run/user/{ID}/gnupg/
+    if [ -z "${GNUPGHOME}" ] && [ -d "/run/user/$(id -u)/gnupg" ]; then
+        export GNUPGHOME="/run/user/$(id -u)/gnupg"
+    fi
+
+    if [ ! -e "${GNUPGHOME:-$HOME/.gnupg}/S.gpg-agent" ]; then
+        gpg-agent --daemon
     fi
 
     # p10k does strange things with `tty`, so we play it safe
