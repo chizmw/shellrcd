@@ -8,7 +8,7 @@
 ze_file="$HOME/.shellrc.d/_shared/git-aliases"
 
 # only proceed if the target file actually exists
-if [ -a "${ze_file}" ]; then
+if [ -f "${ze_file}" ]; then
     # only do the updates if the alias filled file is newer than our git config file
     # (that means we've some something here)
     if [ "${ze_file}" -nt "$HOME/.gitconfig" ]; then
