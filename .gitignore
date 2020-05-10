@@ -207,3 +207,6 @@ tags
 .vim
 
 # End of https://www.gitignore.io/api/git,vim,node,ruby
+
+# ignore a file we generate ourself
+/.remote-update-check

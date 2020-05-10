@@ -1,0 +1,35 @@
+# vim: filetype=sh
+
+# this script isn't great as this can sometimes trigger the p10k warning about slow
+# commands getting in the way of "instant prompt"
+
+# works with *nix and shitty macs
+DIRECTORY=$(cd `dirname $0`/.. && pwd)
+APPNAME=shellrcd
+shell=$(basename $SHELL)
+
+# if we don't have our 'last checked' create it
+if [ ! -f "${DIRECTORY}/.remote-update-check" ]; then
+    # we've never checked, so our 'last update' was 'never'
+    _last_check=-1;
+else
+    _last_check=$(cat "${DIRECTORY}/.remote-update-check");
+fi
+
+# only check once an hour
+_now=$(date +%s);
+if [ $(($_last_check + 3600)) -lt $_now ]; then
+    # update the information in our repo
+    git -C "${DIRECTORY}" fetch -q shellrcd;
+    _head=$(git -C "${DIRECTORY}" rev-parse master);
+    _origin=$(git -C "${DIRECTORY}" rev-parse shellrcd/master);
+
+    # see if anything changed
+    if [ "$_head" != "$_origin" ]; then
+        echo "[${APPNAME}] update available; please run:";
+        echo "[${APPNAME}]     shellrcd-update";
+    fi
+fi
+
+# update the time of our last check
+date +%s > "${DIRECTORY}/.remote-update-check";
