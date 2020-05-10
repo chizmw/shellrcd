@@ -64,17 +64,22 @@ main() {
 
     # not on master?
     if [ "${branch}" != "master" ]; then
+        echo "[shellrcd] Switching back to 'master'…"
         git checkout master
     fi
 
+    echo "[shellrcd] Pulling recent changes into $(git rev-parse --abbrev-ref HEAD)…"
     git pull --rebase --ff-only --prune
 
     if [ "${branch}" != "master" ]; then
         # check out the branch again
         # update the branch
         # rebase from master
+        echo "[shellrcd] Switching back to '${branch}'…"
         git checkout "${branch}"
+        echo "[shellrcd] Pulling recent changes into ${branch}…"
         git pull --rebase --ff-only --prune
+        echo "[shellrcd] Rebasing master and ${branch}…"
         git rebase master
     fi
 
