@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# we don't care about shellcheck validating the remote completion file
+# shellcheck source=/dev/null
+
+# sometimes /etc sometimes /usr/local/etc
+for d in /etc /usr/local/etc; do
+    if [ -e "${d}/bash_completion" ]; then
+        source "${d}/bash_completion"
+    fi
+done
