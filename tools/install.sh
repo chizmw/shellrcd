@@ -176,6 +176,16 @@ setup_shellrcd_extra() {
     fi
 }
 
+setup_shellrcd_submodules() {
+    # we might not have any submodules, but it would be nice to check
+    _count=$(git -C "${SHELLRCDIR}" submodule |wc -l)
+    if [ "${_count}" -gt 0 ]; then
+        echo "[shellrcd] Initialising submodules…"
+        git -C "${SHELLRCDIR}" submodule init
+        git -C "${SHELLRCDIR}" submodule update --recursive
+    fi
+}
+
 show_welcome_message() {
     printf '%s' "$GREEN"
     cat <<"EOF"
@@ -221,6 +231,7 @@ main() {
 
     setup_shellrcd_directory
     setup_shellrcd_extra
+    setup_shellrcd_submodules
 
     if ! command_exists zsh; then
         echo "${YELLOW}zsh is not installed.${RESET} Skipping ${GREEN}zsh${RESET} setup."
