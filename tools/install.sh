@@ -16,11 +16,13 @@ set -eu
 SHELLRCDIR=~/.shellrc.d
 
 # stolen from https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+unset command_exists
 command_exists() {
     command -v "$@" >/dev/null 2>&1
 }
 
 # stolen from https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+unset setup_color
 setup_color() {
     # Only use colors if connected to a terminal
     if [ -t 1 ]; then
@@ -36,6 +38,7 @@ setup_color() {
     fi
 }
 
+unset already_installed
 already_installed() {
     _rcfile="${1:?Missing Argument}"
     if [ ! -e "${_rcfile}" ]; then
@@ -47,6 +50,7 @@ already_installed() {
     fi
 }
 
+unset write_new_file
 write_new_file() {
     rcfile=${1:?Missing rcfile}
     shell=${2:?Missing shell}
@@ -55,6 +59,7 @@ write_new_file() {
     append_block "${rcfile}"
 }
 
+unset append_block
 append_block() {
     cat >> "${1:?Missing rcfile argument}" <<EOF
 
@@ -67,6 +72,7 @@ fi
 EOF
 }
 
+unset append_block_if_missing
 append_block_if_missing() {
     rcfile=${1:?Missing rcfile}
     shell=${2:?Missing shell}
@@ -83,6 +89,7 @@ append_block_if_missing() {
     fi
 }
 
+unset append_or_create
 append_or_create() {
     rcfile=${1:?Missing rcfile}
     shell=${2:?Missing shell}
@@ -109,6 +116,7 @@ append_or_create() {
     fi
 }
 
+unset setup_zshrc
 setup_zshrc() {
     rcfile=~/.zshrc
     shell=zsh
@@ -118,6 +126,7 @@ setup_zshrc() {
     append_or_create "${rcfile}" "${shell}"
 }
 
+unset setup_bashrc
 setup_bashrc() {
     unset rcfile
     shell=bash
@@ -141,6 +150,7 @@ setup_bashrc() {
     append_or_create "${rcfile}" "${shell}"
 }
 
+unset setup_shellrcd_directory
 setup_shellrcd_directory() {
     if [ -e "${SHELLRCDIR}" ]; then
         echo "[shellrcd] ${SHELLRCDIR} already exists. Leaving unchanged."
@@ -154,6 +164,7 @@ setup_shellrcd_directory() {
     fi
 }
 
+unset setup_shellrcd_extra
 setup_shellrcd_extra() {
     # set values with empty defaults
     extra_repo=${SHELLRCD_EXTRA_REPO:-}
@@ -176,6 +187,7 @@ setup_shellrcd_extra() {
     fi
 }
 
+unset setup_shellrcd_submodules
 setup_shellrcd_submodules() {
     # we might not have any submodules, but it would be nice to check
     _count=$(git -C "${SHELLRCDIR}" submodule |wc -l)
@@ -186,6 +198,7 @@ setup_shellrcd_submodules() {
     fi
 }
 
+unset show_welcome_message
 show_welcome_message() {
     printf '%s' "$GREEN"
     cat <<"EOF"
@@ -211,6 +224,7 @@ EOF
     printf '%s' "$RESET"
 }
 
+unset install_updater
 install_updater() {
     if [ -d ~/bin ]; then
         echo "[shellrcd] ${YELLOW}Found $HOME/bin${RESET}; installing shellrcd-update"
@@ -226,7 +240,8 @@ install_updater() {
     fi
 }
 
-main() {
+unset shellrcd_main
+shellrcd_main() {
     setup_color
 
     setup_shellrcd_directory
@@ -250,4 +265,4 @@ main() {
     show_welcome_message
 }
 
-main "$@"
+shellrcd_main "$@"
