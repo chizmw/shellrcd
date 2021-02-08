@@ -150,6 +150,32 @@ setup_bashrc() {
     append_or_create "${rcfile}" "${shell}"
 }
 
+unset current_session_shellrc
+current_session_shellrc() {
+    current_shell="${SHELL##*/}"
+
+    case "${current_shell}" in
+        zsh)
+            current_rcfile=~/.zshrc
+            ;;
+
+        bash)
+            case "$(uname)" in
+                Darwin*)
+                    current_rcfile=~/.bash_profile
+                    ;;
+                *)
+                    current_rcfile=~/.bashrc
+                    ;;
+            esac
+            ;;
+
+        *)
+            current_rcfile="~/.unknownrc"
+            ;;
+    esac
+}
+
 unset setup_shellrcd_directory
 setup_shellrcd_directory() {
     if [ -e "${SHELLRCDIR}" ]; then
@@ -200,6 +226,8 @@ setup_shellrcd_submodules() {
 
 unset show_welcome_message
 show_welcome_message() {
+    current_session_shellrc
+
     printf '%s' "$GREEN"
     cat <<"EOF"
            _             _    _                    _
@@ -213,13 +241,13 @@ EOF
 
     cat <<EOF
 
-    Please look over ${rcfile} for any glaring errors.
+    Please look over ${current_rcfile} for any glaring errors.
 
     Check which scripts are active with:
         sh ${SHELLRCDIR}/tools/list-active.sh
 
     Once happy, open a new shell or:
-        source ${rcfile}
+        source ${current_rcfile}
 EOF
     printf '%s' "$RESET"
 }
