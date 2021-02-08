@@ -257,7 +257,7 @@ install_updater() {
     if [ -d ~/bin ]; then
         echo "[shellrcd] ${YELLOW}Found $HOME/bin${RESET}; installing shellrcd-update"
         # probably shouldn't do anything if it's already there
-        if [ -f "$HOME/bin/shellrcd-update" ]; then
+        if [ ! -h "$HOME/bin/shellrcd-update" ]; then
             echo "[shellrcd] ${RED}$HOME/bin/shellrcd-update${RESET} already exists but is not a symbolic link"
             echo "[shellrcd] … consider removing it and running this script again"
         elif [ -L "$HOME/bin/shellrcd-update" ]; then
