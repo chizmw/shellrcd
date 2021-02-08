@@ -168,7 +168,7 @@ setup_shellrcd_extra() {
 
         echo "[shellrcd] Configuring ${YELLOW}${extra_branch}${RESET} from ${YELLOW}${extra_repo}${RESET}"
         # do what we need to so it's set up
-        git -C "${SHELLRCDIR}" remote add origin git@github.com:chiselwright/shellrcd-extras-chizcw.git
+        git -C "${SHELLRCDIR}" remote add origin "${extra_repo}"
         git -C "${SHELLRCDIR}" remote update origin
         git -C "${SHELLRCDIR}" checkout -t "origin/${extra_branch}"
         # this just makes the history "look sensible" if you examine it in branch
