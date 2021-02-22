@@ -1,12 +1,28 @@
+#!/bin/sh
 # vim: filetype=sh
 
 # this script isn't great as this can sometimes trigger the p10k warning about slow
 # commands getting in the way of "instant prompt"
 
 # works with *nix and shitty macs
-DIRECTORY=$HOME/.shellrc.d
-APPNAME=shellrcd
-shell=$(basename $SHELL)
+DIRECTORY="$HOME/.shellrc.d"
+APPNAME="shellrcd"
+SHELLRCD_FORCEUPDATE="${SHELLRCD_FORCEUPDATE:-}"
+update_required=""
+shell="$(basename $SHELL)"
+
+echodebug() {
+    if [ -n "$SHELLRCD_DEBUG" ]; then
+        printf "\033[32m[DEBUG] %s\n\033[0m" "${1:?Message missing}"
+    fi
+}
+echoinfo() {
+    printf "\033[32m[${APPNAME}] %s\n\033[0m" "${1:?Message missing}"
+}
+
+if [ -n "${SHELLRCD_FORCEUPDATE}" ]; then
+    echodebug "force update requested"
+fi
 
 # if we don't have our 'last checked' create it
 if [ ! -f "${DIRECTORY}/.remote-update-check" ]; then
@@ -16,18 +32,88 @@ else
     _last_check=$(cat "${DIRECTORY}/.remote-update-check");
 fi
 
-# only check once an hour
+# heavily inspired by
+#  https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh#L180
+do_commit_check() {
+    startsha="${1:-missing argument}"
+    stopsha="${2:-missing argument}"
+
+    local commits
+    if commits="$(git rev-list --left-right "$startsha"..."$stopsha" 2>/dev/null)"; then
+        local commit behind=0 ahead=0
+
+        for commit in $commits; do
+            case "$commit" in
+                "<"*) ((behind++)) ;;
+                *)    ((ahead++))  ;;
+            esac
+            count="$behind $ahead"
+        done
+    else
+        count=""
+    fi
+
+    case "$count" in
+    "")
+        # no upstream
+        ;;
+    "0 0")
+        # equal to upstream
+        ;;
+    "0 "*)
+        # ahead of upstream
+        echoinfo "local changes are ready to be pushed to $startsha"
+        ;;
+
+    *" 0")
+        # behind upstream
+        update_required="yes"
+        ;;
+
+    *)
+        # diverged from upstream
+        echoinfo "$stopsha has diverged from $startsha"
+        ;;
+    esac
+
+    echodebug "$startsha...$stopsha: $count"
+}
+
+
+# only check once an hour, or when forced
 _now=$(date +%s);
-if [ $(($_last_check + 3600)) -lt $_now ]; then
+if [ -n "${SHELLRCD_FORCEUPDATE}" -o $(($_last_check + 3600)) -lt $_now ]; then
     # update the information in our repo
+    echodebug "updating remote: origin"
+    git -C "${DIRECTORY}" fetch -q origin;
+    echodebug "updating remote: shellrcd"
     git -C "${DIRECTORY}" fetch -q shellrcd;
-    _head=$(git -C "${DIRECTORY}" rev-parse master);
-    _origin=$(git -C "${DIRECTORY}" rev-parse shellrcd/master);
+
+    # compare our two streams of work:
+    ## the core project
+    do_commit_check "shellrcd/master" "shellrcd/HEAD"
+
+    ## our extended customisations
+    branch="$(git branch --show-current)"
+    # https://stackoverflow.com/questions/46514831/how-read-the-current-upstream-for-a-git-branch
+    tracking_branch="$(git rev-parse --abbrev-ref $branch@{u})"
+    do_commit_check "${tracking_branch}" "HEAD"
 
     # see if anything changed
-    if [ "$_head" != "$_origin" ]; then
-        echo "[${APPNAME}] update available; please run:";
-        echo "[${APPNAME}]     shellrcd-update";
+    if [ "yes" == "$update_required" ]; then
+        # ask the user if they'd liuke it run for them now
+        printf "\033[32m[${APPNAME}] %s\n\033[0m" "update available; update now? [y/N] "
+        read -r response
+        #read -r -p "[${APPNAME}] update available; update now? [y/N] " response
+        case "$response" in
+            [yY][eE][sS]|[yY])
+                ${DIRECTORY}/tools/shellrcd-update
+                ;;
+            *)
+                echoinfo "to manually update $APPNAMEi later, please run:";
+                echoinfo "     shellrcd-update";
+                ;;
+        esac
     fi
 fi
 
