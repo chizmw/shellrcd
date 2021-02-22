@@ -100,7 +100,7 @@ if [ -n "${SHELLRCD_FORCEUPDATE}" -o $(($_last_check + 3600)) -lt $_now ]; then
     do_commit_check "${tracking_branch}" "HEAD"
 
     # see if anything changed
-    if [ "yes" == "$update_required" ]; then
+    if [ "yes" = "$update_required" ]; then
         # ask the user if they'd liuke it run for them now
         printf "\033[32m[${APPNAME}] %s\n\033[0m" "update available; update now? [y/N] "
         read -r response
