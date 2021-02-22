@@ -39,7 +39,7 @@ do_commit_check() {
     stopsha="${2:-missing argument}"
 
     local commits
-    if commits="$(git rev-list --left-right "$startsha"..."$stopsha" 2>/dev/null)"; then
+    if commits="$(git -C $DIRECTORY rev-list --left-right "$startsha"..."$stopsha" 2>/dev/null)"; then
         local commit behind=0 ahead=0
 
         for commit in $commits; do
@@ -94,9 +94,9 @@ if [ -n "${SHELLRCD_FORCEUPDATE}" -o $(($_last_check + 3600)) -lt $_now ]; then
     do_commit_check "shellrcd/master" "shellrcd/HEAD"
 
     ## our extended customisations
-    branch="$(git branch --show-current)"
+    branch="$(git -C $DIRECTORY branch --show-current)"
     # https://stackoverflow.com/questions/46514831/how-read-the-current-upstream-for-a-git-branch
-    tracking_branch="$(git rev-parse --abbrev-ref $branch@{u})"
+    tracking_branch="$(git -C $DIRECTORY rev-parse --abbrev-ref $branch@{u})"
     do_commit_check "${tracking_branch}" "HEAD"
 
     # see if anything changed
