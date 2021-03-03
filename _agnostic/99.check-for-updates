@@ -94,7 +94,8 @@ if [ -n "${SHELLRCD_FORCEUPDATE}" -o $(($_last_check + 3600)) -lt $_now ]; then
     do_commit_check "shellrcd/master" "shellrcd/HEAD"
 
     ## our extended customisations
-    branch="$(git -C $DIRECTORY branch --show-current)"
+    # needs 'modern' git: branch="$(git -C $DIRECTORY branch --show-current)"
+    branch="$(git -C $DIRECTORY rev-parse --abbrev-ref HEAD)"
     # https://stackoverflow.com/questions/46514831/how-read-the-current-upstream-for-a-git-branch
     tracking_branch="$(git -C $DIRECTORY rev-parse --abbrev-ref $branch@{u})"
     do_commit_check "${tracking_branch}" "HEAD"
