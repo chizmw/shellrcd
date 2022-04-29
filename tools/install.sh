@@ -2,12 +2,12 @@
 # vim: filetype=sh:et:ts=4:sts=4:sw=4:si:ai
 #
 # This script should be run via curl:
-#   sh -c "$(curl -fsSL https://raw.githubusercontent.com/chiselwright/shellrcd/master/tools/install.sh)"
+#   sh -c "$(curl -fsSL https://raw.githubusercontent.com/chizmw/shellrcd/master/tools/install.sh)"
 # or wget:
-#   sh -c "$(wget -qO- https://raw.githubusercontent.com/chiselwright/shellrcd/master/tools/install.sh)"
+#   sh -c "$(wget -qO- https://raw.githubusercontent.com/chizmw/shellrcd/master/tools/install.sh)"
 #
 # As an alternative, you can first download the install script and run it afterwards:
-#   curl -fsSL -o ~/install-shellrcd.sh https://raw.githubusercontent.com/chiselwright/shellrcd/master/tools/install.sh
+#   curl -fsSL -o ~/install-shellrcd.sh https://raw.githubusercontent.com/chizmw/shellrcd/master/tools/install.sh
 #   $EDITOR ~/install-shellrcd.sh
 #   sh -c ~/install-shellrcd.sh
 
@@ -184,7 +184,7 @@ setup_shellrcd_directory() {
         echo "[shellrcd] ${YELLOW}${SHELLRCDIR} is not found${RESET}. Downloading..."
         git clone --origin shellrcd \
             --quiet \
-            --branch=master git://github.com/chiselwright/shellrcd.git \
+            --branch=master git@github.com:chizmw/shellrcd.git \
             "${SHELLRCDIR}"
         echo "[shellrcd] ...done"
     fi
